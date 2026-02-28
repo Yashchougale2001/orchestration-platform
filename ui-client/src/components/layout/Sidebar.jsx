@@ -71,7 +71,7 @@ export const Sidebar = ({ open, onClose, width, isMobile }) => {
       >
         <SmartToyIcon color="primary" sx={{ fontSize: 32, mr: 1.5 }} />
         <Typography variant="h6" fontWeight={700}>
-          RAG Assistant
+          SmartChat
         </Typography>
       </Box>
 
