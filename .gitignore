@@ -49,7 +49,6 @@ notebooks/.ipynb_checkpoints/
 chroma/
 chromadb/
 vectorstore/
-embeddings/
 memory/
 
 # Ignore memory conversation files

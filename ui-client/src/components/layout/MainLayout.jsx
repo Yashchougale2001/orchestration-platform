@@ -4,45 +4,60 @@ import { Outlet } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { Navbar } from "./Navbar";
 
+const DRAWER_WIDTH = 260;
+const DRAWER_WIDTH_COLLAPSED = 72;
+
 /**
- * Main layout component with sidebar and navbar
- * Handles responsive behavior for mobile/desktop
+ * Main layout component with collapsible sidebar
+ * Desktop: Sidebar collapses to icons only
+ * Mobile: Sidebar is hidden/overlay
  */
 export const MainLayout = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-
-  const drawerWidth = 260;
+  const toggleSidebar = () => {
+    if (isMobile) {
+      setMobileOpen(!mobileOpen);
+    } else {
+      setSidebarOpen(!sidebarOpen);
+    }
+  };
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
       {/* Sidebar */}
       <Sidebar
         open={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        width={drawerWidth}
+        mobileOpen={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        drawerWidth={DRAWER_WIDTH}
+        collapsedWidth={DRAWER_WIDTH_COLLAPSED}
         isMobile={isMobile}
       />
 
-      {/* Main content area */}
+      {/* Main content area - NO margin, flexbox handles spacing */}
       <Box
+        component="main"
         sx={{
-          flex: 1,
+          flexGrow: 1,
           display: "flex",
           flexDirection: "column",
-          ml: isMobile ? 0 : sidebarOpen ? `${drawerWidth}px` : 0,
-          transition: "margin-left 0.3s ease",
+          minHeight: "100vh",
+          overflow: "hidden",
         }}
       >
         {/* Top navbar */}
-        <Navbar onMenuClick={toggleSidebar} />
+        <Navbar
+          onMenuClick={toggleSidebar}
+          isMobile={isMobile}
+          sidebarOpen={sidebarOpen}
+        />
 
         {/* Page content */}
         <Box
-          component="main"
           sx={{
             flex: 1,
             display: "flex",

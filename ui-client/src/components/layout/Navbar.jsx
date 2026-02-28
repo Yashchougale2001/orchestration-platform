@@ -12,16 +12,17 @@ import {
   Divider,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import LogoutIcon from "@mui/icons-material/Logout";
+import PersonIcon from "@mui/icons-material/Person";
 import { ThemeToggle } from "./ThemeToggle";
 import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
 /**
- * Top navigation bar component
- * Contains menu toggle, theme toggle, and user menu
+ * Top navigation bar
  */
-export const Navbar = ({ onMenuClick }) => {
+export const Navbar = ({ onMenuClick, isMobile, sidebarOpen }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -47,23 +48,20 @@ export const Navbar = ({ onMenuClick }) => {
     >
       <Toolbar>
         {/* Menu toggle button */}
-        <IconButton
-          edge="start"
-          color="inherit"
-          onClick={onMenuClick}
-          sx={{ mr: 2, color: "text.primary" }}
-        >
-          <MenuIcon />
-        </IconButton>
+        <Tooltip title={sidebarOpen ? "Collapse menu" : "Expand menu"}>
+          <IconButton
+            edge="start"
+            color="inherit"
+            onClick={onMenuClick}
+            sx={{ mr: 2, color: "text.primary" }}
+          >
+            {/* Show different icon based on sidebar state (desktop only) */}
+            {!isMobile && sidebarOpen ? <MenuOpenIcon /> : <MenuIcon />}
+          </IconButton>
+        </Tooltip>
 
-        {/* Page title area - can be dynamic */}
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{ flexGrow: 1, color: "text.primary" }}
-        >
-          {/* Dynamic title can go here */}
-        </Typography>
+        {/* Spacer */}
+        <Box sx={{ flexGrow: 1 }} />
 
         {/* Theme toggle */}
         <ThemeToggle />
@@ -83,8 +81,14 @@ export const Navbar = ({ onMenuClick }) => {
           onClose={handleMenuClose}
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
           transformOrigin={{ vertical: "top", horizontal: "right" }}
+          PaperProps={{
+            sx: {
+              mt: 1,
+              minWidth: 200,
+            },
+          }}
         >
-          <Box sx={{ px: 2, py: 1 }}>
+          <Box sx={{ px: 2, py: 1.5 }}>
             <Typography variant="subtitle2" fontWeight={600}>
               {user?.name}
             </Typography>
@@ -93,8 +97,15 @@ export const Navbar = ({ onMenuClick }) => {
             </Typography>
           </Box>
           <Divider />
-          <MenuItem onClick={handleLogout}>
-            <LogoutIcon fontSize="small" sx={{ mr: 1 }} />
+          <MenuItem onClick={handleMenuClose}>
+            <PersonIcon
+              fontSize="small"
+              sx={{ mr: 1.5, color: "text.secondary" }}
+            />
+            Profile
+          </MenuItem>
+          <MenuItem onClick={handleLogout} sx={{ color: "error.main" }}>
+            <LogoutIcon fontSize="small" sx={{ mr: 1.5 }} />
             Logout
           </MenuItem>
         </Menu>
